@@ -1,0 +1,30 @@
+run:
+  concurrency: 2
+  timeout: 5m
+  go: "1.21"
+
+linters:
+  disable:
+    - containedctx
+    - contextcheck
+    - paralleltest
+  enable:
+    - gofmt
+    - goconst
+    - goimports
+    - golint
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - prealloc
+    - scopelint
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unused
+    - unparam
+    - misspell
