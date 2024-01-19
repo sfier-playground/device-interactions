@@ -15,7 +15,7 @@
 │   ├── core
 │   │   ├── domain          # business entities
 │   │   ├── port            # abstraction layer, to separate the core business from handlers and repositories.
-│   │   └── service         # The business logic of the application.
+│   │   └── service         # application's core business.
 │   │
 │   ├── handler             # application's handler for the APIs.
 │   └── repostiory          # repositories to dealing with the external soruces whether DB, external service, or just a simple CSV file.
