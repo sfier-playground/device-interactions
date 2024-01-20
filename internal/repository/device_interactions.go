@@ -27,7 +27,7 @@ type DeviceInteractions struct {
 }
 
 func NewDeviceInteractions(db *gorm.DB) *DeviceInteractions {
-	query, err := os.ReadFile("./device_interactions.sql")
+	query, err := os.ReadFile("./internal/repository/device_interactions.sql")
 	if err != nil {
 		logger.Fatal("could not found the sql file", "error", err)
 	}

@@ -51,7 +51,14 @@ func initApp() {
 	packages := packages{
 		validator: vld,
 	}
-	dbConn := infrastructure.NewPostgreSQLConnection(infrastructure.PostgreSQLConfig{})
+	dbConn := infrastructure.NewPostgreSQLConnection(infrastructure.PostgreSQLConfig{
+		Host:     config.Get().Postgres.Host,
+		Port:     config.Get().Postgres.Port,
+		User:     config.Get().Postgres.User,
+		Password: config.Get().Postgres.Password,
+		DBName:   config.Get().Postgres.DBName,
+		Debug:    config.Get().Postgres.Debug,
+	})
 	deviceInteractionsRepo := repository.NewDeviceInteractions(dbConn)
 	app = &application{
 		svc: services{
