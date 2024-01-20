@@ -67,3 +67,4 @@ clean:
 
 mock:
 	mockgen -source=./internal/core/port/repository.go -package=mocks  -destination=./mocks/repository/repository.go
+	mockgen -source=./internal/core/port/service.go -package=mocks  -destination=./mocks/service/service.go

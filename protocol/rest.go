@@ -38,7 +38,7 @@ func ServeREST() error {
 	})
 	v1 := srv.Group("/v1")
 	hdl := handler.NewRESTHandler(app.svc.deviceSubmissionService, app.pkg.validator)
-	devicesV1 := v1.Group("/devices")
+	devicesV1 := v1.Group("/devices/interactions")
 
 	// /v1/devices
 	{

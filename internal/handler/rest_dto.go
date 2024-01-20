@@ -40,5 +40,5 @@ type GeoLocation struct {
 // Device ...
 type Device struct {
 	ID   string `json:"id" validate:"uuid_rfc4122"`
-	Name string `json:"name" validate:"device_name,max=15"`
+	Name string `json:"name" validate:"required,device_name,max=15"`
 }
