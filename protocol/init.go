@@ -4,7 +4,9 @@ import (
 	"log"
 
 	"github.com/sifer169966/device-interactions/config"
+	"github.com/sifer169966/device-interactions/infrastructure"
 	"github.com/sifer169966/device-interactions/internal/core/service"
+	"github.com/sifer169966/device-interactions/internal/repository"
 	"github.com/sifer169966/device-interactions/pkg/flags"
 	"github.com/sifer169966/device-interactions/pkg/validators"
 	"github.com/sifer169966/go-logger"
@@ -14,9 +16,13 @@ var app *application
 
 type application struct {
 	// svc stand for service
-	svc *service.Service
+	svc services
 	// pkg stand for package
 	pkg packages
+}
+
+type services struct {
+	deviceSubmissionService *service.DeviceSubmissionService
 }
 
 type packages struct {
@@ -45,9 +51,12 @@ func initApp() {
 	packages := packages{
 		validator: vld,
 	}
-	//todo: inject repository into the service
+	dbConn := infrastructure.NewPostgreSQLConnection(infrastructure.PostgreSQLConfig{})
+	deviceInteractionsRepo := repository.NewDeviceInteractions(dbConn)
 	app = &application{
-		svc: service.New(nil),
+		svc: services{
+			deviceSubmissionService: service.NewDeviceSubmission(deviceInteractionsRepo),
+		},
 		pkg: packages,
 	}
 }

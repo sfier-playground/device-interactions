@@ -2,6 +2,9 @@ package handler
 
 import (
 	"time"
+
+	"github.com/shopspring/decimal"
+	"github.com/sifer169966/device-interactions/internal/core/domain"
 )
 
 // DeviceSubmissionRequest ...
@@ -11,10 +14,27 @@ type DeviceSubmissionRequest struct {
 	Devices   []Device    `json:"devices" validate:"required"`
 }
 
+func (t DeviceSubmissionRequest) toDeviceSubmissionDomain() domain.DeviceSubmission {
+	deviceLenght := len(t.Devices)
+	devices := make([]domain.Device, deviceLenght)
+	for i := 0; i < deviceLenght; i++ {
+		devices[i].DeviceID = t.Devices[i].ID
+		devices[i].Name = t.Devices[i].Name
+	}
+	return domain.DeviceSubmission{
+		Timestamp: t.Timestamp,
+		Location: domain.GeoLocation{
+			Latitude:  t.Location.Latitude,
+			Longitude: t.Location.Longitude,
+		},
+		Devices: devices,
+	}
+}
+
 // GeoLocation ...
 type GeoLocation struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	Latitude  decimal.Decimal `json:"latitude"`
+	Longitude decimal.Decimal `json:"longitude"`
 }
 
 // Device ...

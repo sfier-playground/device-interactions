@@ -5,5 +5,5 @@ import (
 )
 
 type ServiceDeviceInteractor interface {
-	SomeBusinessLogic(request domain.BusinessLogicRequest) error
+	Submit(in domain.DeviceSubmission) error
 }

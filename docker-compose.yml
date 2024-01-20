@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: somesecret
+      POSTGRES_DB: device_interactions
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - 5432:5432

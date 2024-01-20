@@ -34,7 +34,7 @@ func ServeREST() error {
 		return c.JSON(http.StatusOK, "bk-passkey-service is running.")
 	})
 	v1 := srv.Group("/v1")
-	hdl := handler.NewRESTHandler(app.svc, app.pkg.validator)
+	hdl := handler.NewRESTHandler(app.svc.deviceSubmissionService, app.pkg.validator)
 	devicesV1 := v1.Group("/devices")
 
 	// /v1/devices
@@ -52,6 +52,14 @@ func ServeREST() error {
 		mdw.SetServerUnavailable()
 		graceful(srv, errCh)
 	}()
+
+	defer func() {
+		err := recover()
+		if err != nil {
+			c <- syscall.SIGTERM
+		}
+	}()
+
 	err := srv.Start(":" + config.Get().App.HTTPPort)
 	if err != nil && err != http.ErrServerClosed {
 		logger.Error("unexpected rest-http server error", "error", err)
