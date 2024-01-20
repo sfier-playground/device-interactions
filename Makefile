@@ -53,6 +53,9 @@ build:
 start:
 	go run main.go serve-rest
 
+docker.up:
+	docker-compose up
+
 .PHONY: test
 test:
 	go test ./... -coverprofile coverage.out
