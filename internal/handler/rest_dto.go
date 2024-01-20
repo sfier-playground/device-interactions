@@ -11,7 +11,7 @@ import (
 type DeviceSubmissionRequest struct {
 	Timestamp time.Time   `json:"timestamp" validate:"required"`
 	Location  GeoLocation `json:"location" validate:"required"`
-	Devices   []Device    `json:"devices" validate:"required"`
+	Devices   []Device    `json:"devices" validate:"gte=1,lte=2,dive"`
 }
 
 func (t DeviceSubmissionRequest) toDeviceSubmissionDomain() domain.DeviceSubmission {
@@ -33,12 +33,12 @@ func (t DeviceSubmissionRequest) toDeviceSubmissionDomain() domain.DeviceSubmiss
 
 // GeoLocation ...
 type GeoLocation struct {
-	Latitude  decimal.Decimal `json:"latitude"`
-	Longitude decimal.Decimal `json:"longitude"`
+	Latitude  decimal.Decimal `json:"latitude" validate:"required,dgte=-85.05115,dlte=85"`
+	Longitude decimal.Decimal `json:"longitude" validate:"required,dgte=-180,dlte=180"`
 }
 
 // Device ...
 type Device struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   string `json:"id" validate:"uuid_rfc4122"`
+	Name string `json:"name" validate:"device_name,max=15"`
 }

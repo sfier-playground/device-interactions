@@ -22,6 +22,10 @@ import (
 	|
 */
 
+const (
+	tableDeviceInteractions = "device_interactions"
+)
+
 type DeviceInteractions struct {
 	db *gorm.DB
 }
@@ -59,8 +63,7 @@ func (r *DeviceInteractions) CreateMany(in domain.DeviceSubmission) error {
 			UpdatedAt:     now,
 		}
 	}
-
-	err := r.db.Create(deviceInteractionModels).Error
+	err := r.db.Table(tableDeviceInteractions).Create(deviceInteractionModels).Error
 	if err != nil {
 		logger.Error("could not insert device_interactions", "error", err)
 		return apperror.NewInternalServerError()

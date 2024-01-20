@@ -28,7 +28,10 @@ import (
 func ServeREST() error {
 	initApp()
 	srv := echo.New()
-	mdw := middleware.NewMiddleware()
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	mdw := middleware.NewMiddleware(c)
+	srv.Use(mdw.HandlePanic())
 	srv.Use(mdw.IngressRelay())
 	srv.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "bk-passkey-service is running.")
@@ -41,23 +44,13 @@ func ServeREST() error {
 	{
 		devicesV1.POST("", hdl.DeviceSubmission)
 	}
-
-	c := make(chan os.Signal, 1)
 	errCh := make(chan error, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		signal := <-c
 		logger.Info(fmt.Sprintf("got signal %v, start graceful shut down ...", signal))
 		// self protection
 		mdw.SetServerUnavailable()
 		graceful(srv, errCh)
-	}()
-
-	defer func() {
-		err := recover()
-		if err != nil {
-			c <- syscall.SIGTERM
-		}
 	}()
 
 	err := srv.Start(":" + config.Get().App.HTTPPort)
