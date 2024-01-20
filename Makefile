@@ -64,3 +64,6 @@ test:
 .PHONY: clean
 clean:
 	@rm -rf $(GO_BINARY_NAME) ./vendor
+
+mock:
+	mockgen -source=./internal/core/port/repository.go -package=mocks  -destination=./mocks/repository/repository.go
