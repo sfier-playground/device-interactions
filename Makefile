@@ -1,7 +1,7 @@
 GO_BINARY_NAME=device-interaction # <- change this value to your binary name
 VERSION=$(shell git describe --tags || git rev-parse --short HEAD || echo "unknown version")
-LDFLAGS+= -X "github.com/sifer169966/device-interactions/pkg/flags/cmds.Version=$(VERSION)"
-LDFLAGS+= -X "github.com/sifer169966/device-interactions/pkg/flags/cmds.GoVersion=$(shell go version | sed -r 's/go version go(.*)\ .*/\1/')"
+LDFLAGS+= -X "github.com/sifer169966/device-interactions/pkg/flags.Version=$(VERSION)"
+LDFLAGS+= -X "github.com/sifer169966/device-interactions/pkg/flags.GoVersion=$(shell go version | sed -r 's/go version go(.*)\ .*/\1/')"
 
 
 
@@ -34,7 +34,6 @@ precommit.rehooks:
 # Always turn on go module when use `go` command.
 GO := GO111MODULE=on go
 
-
 # Build GO application
 # -mod=vendor
 # tells the go command to use the vendor directory. In this mode,
@@ -48,7 +47,7 @@ GO := GO111MODULE=on go
 # tells the version and go version.
 .PHONY: build
 build:
-	$(GO) build -ldflags '$(LDFLAGS)' -a -v -o $(GO_BINARY_NAME) ./cmd/main.go
+	$(GO) build -ldflags '$(LDFLAGS)' -a -v -o $(GO_BINARY_NAME) main.go
 
 start:
 	go run main.go serve-rest
