@@ -34,7 +34,7 @@ func ServeREST() error {
 	srv.Use(mdw.HandlePanic())
 	srv.Use(mdw.IngressRelay())
 	srv.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "bk-passkey-service is running.")
+		return c.JSON(http.StatusOK, "device-interactions service is running.")
 	})
 	v1 := srv.Group("/v1")
 	hdl := handler.NewRESTHandler(app.svc.deviceSubmissionService, app.pkg.validator)

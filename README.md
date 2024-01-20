@@ -5,7 +5,6 @@
 
 ### Project Structure
 
-
 ```
 .
 ├── cmd                     # application commands
@@ -20,17 +19,21 @@
 │   ├── handler             # application's handler for the APIs.
 │   └── repostiory          # repositories to dealing with the external soruces whether DB, external service, or just a simple CSV file.
 |
-│── mocks                   # mocking an interfaces for unit testing
+│── mocks                   # mock interfaces for unit testing
 ├── pkg                     # utility packages.
 ├── protocol                # application's protocols to listerning on incoming traffics.
 |── main.go                 # entry point to run the application
 ```
 
 ---
-### How to run ?
+## How to run on locally?
 
-Here is the example to run the application on your local machine
+### Prerequisite
+- `make` command
+- `docker`
+- `go` version 1.21+
 
-```make start```
-
-the command above is an example to make the application to serve REST protocol
+### Get started
+- create `.env` file in the root project, copy the value from `.env.example`, then edit those values which suitable for your local configuration
+- `make docker.up` (you can skip this step if you already have PostgreSQL on your localhost)
+- `make start` to run the application
