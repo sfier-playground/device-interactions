@@ -26,7 +26,7 @@ func NewDeviceSubmission(dviRepo port.DeviceInteractionsRepository) *DeviceSubmi
 
 func (svc *DeviceSubmissionService) Submit(in domain.DeviceSubmission) error {
 	in.Timestamp = in.Timestamp.UTC()
-	for i := range in.Devices {
+	for i := 0; i < len(in.Devices); i++ {
 		in.Devices[i].SetInteractionID()
 	}
 	return svc.dviRepo.CreateMany(in)
