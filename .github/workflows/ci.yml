@@ -1,0 +1,29 @@
+name: CI
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  go-ci:
+    runs-on: ubuntu-latest
+    env:
+      PAT: ${{ secrets.PAT }}
+      GOPRIVATE: github.com/sifer169966/go-logger
+      GOPROXY: direct
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Setup Private Dependency
+        run: |
+          git config --global url."https://$PAT@github.com/".insteadOf "https://github.com/"
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./...
