@@ -3,5 +3,18 @@ on:
   pull_request:
     types: [opened, reopened]
 jobs:
-  pipeline:
-    uses: sfier-playground/github-action-share-template/.github/workflows/go_ci.yml@master
+  go-ci:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.21
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./...
