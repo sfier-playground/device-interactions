@@ -8,13 +8,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          token: $GITHUB_TOKEN
-
+      - name: Setup Private Dependency
+        run: |
+          git config --global url."https://${{ secrets.GCP_PROJECT_ID }}:sifer169966@github.com/".insteadOf "https://github.com/"
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.21
+      - run: |
+          go env -w GOPRIVATE=github.com/sifer169966
 
       - name: Install dependencies
         run: go mod download
