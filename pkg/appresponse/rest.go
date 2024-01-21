@@ -13,7 +13,6 @@ import (
 type responseSuccess struct {
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
-	Status  bool        `json:"status"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
@@ -31,7 +30,6 @@ func returnSuccess(resp interface{}) responseSuccess {
 	return responseSuccess{
 		Code:    fmt.Sprintf("%s-20001", config.Get().App.CodeName),
 		Message: success,
-		Status:  true,
 		Data:    resp,
 	}
 }
@@ -39,7 +37,6 @@ func returnSuccess(resp interface{}) responseSuccess {
 type responseError struct {
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
-	Status  bool        `json:"status"`
 	Errors  interface{} `json:"errors"`
 }
 
@@ -58,7 +55,6 @@ func returnError(code int, message string, errs interface{}) responseError {
 	return responseError{
 		Code:    fmt.Sprintf("%s-%d", config.Get().App.CodeName, code),
 		Message: message,
-		Status:  false,
 		Errors:  errs,
 	}
 }
