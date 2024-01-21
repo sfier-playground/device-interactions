@@ -1,4 +1,7 @@
-name: calling-workflow
+name: CI
+on:
+  pull_request:
+    types: [opened, reopened]
 jobs:
   pipeline:
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
