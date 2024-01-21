@@ -4,6 +4,7 @@ on:
     types: [opened, reopened]
 jobs:
   go-ci:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
