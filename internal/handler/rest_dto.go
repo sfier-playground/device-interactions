@@ -11,7 +11,7 @@ import (
 type DeviceSubmissionRequest struct {
 	Timestamp time.Time   `json:"timestamp" validate:"required"`
 	Location  GeoLocation `json:"location" validate:"required"`
-	Devices   []Device    `json:"devices" validate:"gte=1,lte=2,dive"`
+	Devices   []Device    `json:"devices" validate:"gte=1,lte=10,dive"`
 }
 
 func (t DeviceSubmissionRequest) toDeviceSubmissionDomain() domain.DeviceSubmission {
