@@ -4,9 +4,10 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   go-ci:
-    env:
-      PAT: ${{secrets.PAT}}
     runs-on: ubuntu-latest
+    env:
+      PAT: ${{ secrets.PAT }}
+      GOPRIVATE: github.com/sifer169966/go-logger
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -17,8 +18,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.21
-      - run: |
-          go env -w GOPRIVATE=github.com/sifer169966
 
       - name: Install dependencies
         run: go mod download
