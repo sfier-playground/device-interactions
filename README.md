@@ -26,7 +26,7 @@
 ![Image](./high-level.jpg)
 
 ## Data Model
-![Image](./data-model.png)
+![Image](./data-model.jpg)
 
 
 
@@ -49,7 +49,7 @@ None
 | --------- | -------- | ------------ | ------- | ---------------------------------------------------------------------------------------- |
 | timestamp    | yes      | timestamp         |    "2006-01-02 15:04:05"    | timestamp metric to specify the time that devices interact with. see the list format that the system supported [Docs](https://pkg.go.dev/time#pkg-constants)            |
 | location    | yes      | [location](#Location) |     -    | Geographical coordinates|
-| devices    | yes      | List of [device](#device) |    -     | List of devices for submission |
+| devices    | yes      | List of [device](#device) |    -     | List of devices for submission. List the devices to submit. The list must have at least 1 element and not exceed 10 elements. |
 
 #### example
 ```json
@@ -89,8 +89,8 @@ curl --location 'http://localhost:8080/v1/devices/interactions' \
 ### Response
 #### Success
 ```Status: 204 No Content```
-
 #### Error
+[Error Response](#error-response)
 ## Error Response
 | Parameter | Explicit | Data Type    | Example | Description                                                                              |
 | --------- | -------- | ------------ | ------- | ---------------------------------------------------------------------------------------- |
