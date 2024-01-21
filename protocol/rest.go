@@ -28,23 +28,23 @@ import (
 func ServeREST() error {
 	initApp()
 	srv := echo.New()
-	mdw := middleware.NewMiddleware()
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	mdw := middleware.NewMiddleware(c)
+	srv.Use(mdw.HandlePanic())
 	srv.Use(mdw.IngressRelay())
 	srv.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "bk-passkey-service is running.")
+		return c.JSON(http.StatusOK, "device-interactions service is running.")
 	})
 	v1 := srv.Group("/v1")
-	hdl := handler.NewRESTHandler(app.svc, app.pkg.validator)
-	devicesV1 := v1.Group("/devices")
+	hdl := handler.NewRESTHandler(app.svc.deviceSubmissionService, app.pkg.validator)
+	devicesV1 := v1.Group("/devices/interactions")
 
 	// /v1/devices
 	{
 		devicesV1.POST("", hdl.DeviceSubmission)
 	}
-
-	c := make(chan os.Signal, 1)
 	errCh := make(chan error, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		signal := <-c
 		logger.Info(fmt.Sprintf("got signal %v, start graceful shut down ...", signal))
@@ -52,6 +52,7 @@ func ServeREST() error {
 		mdw.SetServerUnavailable()
 		graceful(srv, errCh)
 	}()
+
 	err := srv.Start(":" + config.Get().App.HTTPPort)
 	if err != nil && err != http.ErrServerClosed {
 		logger.Error("unexpected rest-http server error", "error", err)

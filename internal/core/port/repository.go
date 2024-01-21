@@ -1,5 +1,7 @@
 package port
 
+import "github.com/sifer169966/device-interactions/internal/core/domain"
+
 /*
 	|--------------------------------------------------------------------------
 	| Application Port
@@ -10,6 +12,6 @@ package port
 	|
 */
 
-type Repository interface {
-	SomeFunction() error
+type DeviceInteractionsRepository interface {
+	CreateMany(d domain.DeviceSubmission) error
 }

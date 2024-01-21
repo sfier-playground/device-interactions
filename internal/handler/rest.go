@@ -27,16 +27,19 @@ func NewRESTHandler(svc port.ServiceDeviceInteractor, vld Validator) *RESTHandle
 // DeviceSubmission ...
 // handling the interaction from devices
 func (hdl *RESTHandler) DeviceSubmission(c echo.Context) error {
-	var r DeviceSubmissionRequest
-
-	err := c.Bind(&r)
+	var req DeviceSubmissionRequest
+	err := c.Bind(&req)
 	if err != nil {
 		logger.Info("could not decode the request payload", "info", err)
 		return appresponse.Error(c, apperror.NewBadRequestError())
 	}
-	err = hdl.vld.ValidateStruct(r)
+	err = hdl.vld.ValidateStruct(req)
 	if err != nil {
 		logger.Info("incorrect payload format", "info", err)
+		return appresponse.Error(c, err)
+	}
+	err = hdl.svc.Submit(req.toDeviceSubmissionDomain())
+	if err != nil {
 		return appresponse.Error(c, err)
 	}
 	return appresponse.NoContent(c, nil)
