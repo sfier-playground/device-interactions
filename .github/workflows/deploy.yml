@@ -4,4 +4,4 @@ on:
     branches: [dev, stage, master]
 jobs:
   pipeline:
-    uses: sfier-playground/github-action-share-template/.github/workflows/go_ci.yml@master
+    uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
