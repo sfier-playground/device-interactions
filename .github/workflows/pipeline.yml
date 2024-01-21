@@ -1,0 +1,3 @@
+include:
+  - repository: sifer169966/github-action-share-template
+    path: go_workflow.yml
