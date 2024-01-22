@@ -123,6 +123,58 @@ errors    | no      | any |  -    | Error extension |
 | DVI-50001    | 500 | internal server error      |
 DVI-50003    | 503 | server unavailable      |
 
+## BigQuery
+
+```query
+-- start from --
+DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1480 DAY);
+-- to --
+DECLARE end_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP();
+-- timeframe resolution (seconds) --
+DECLARE timeframe INT64 DEFAULT 900;
+-- threshold for detection --
+DECLARE deviation_threshold FLOAT64 DEFAULT 2.0;
+
+
+
+-- find stadard deviation in specific timeframe --
+WITH DeviceInteractionStats AS (
+  SELECT
+    miner,
+    TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe)) AS interaction_time_series,
+    COUNT(*) AS interaction_count,
+    STDDEV_POP(COUNT(*)) OVER (PARTITION BY miner, TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe))) AS base_stddev
+  FROM
+    `bigquery-public-data.ethereum_blockchain.blocks`
+  WHERE
+    `timestamp` BETWEEN start_at AND end_at
+  GROUP BY
+    miner, interaction_time_series
+)
+
+SELECT
+  interaction_time_series,
+  miner,
+  interaction_count,
+  base_stddev,
+  ABS(interaction_count - AVG(interaction_count) OVER (PARTITION BY miner, interaction_time_series)) / base_stddev AS anomaly_score
+FROM (
+  SELECT
+    device_id,
+    interaction_time_series,
+    interaction_count,
+    base_stddev
+  FROM
+    DeviceInteractionStats
+)
+HAVING
+  anomaly_score > deviation_threshold
+ORDER BY
+  anomaly_score DESC;
+```
+
+---
+
 
 # How to run on locally?
 
@@ -135,3 +187,13 @@ DVI-50003    | 503 | server unavailable      |
 - create `.env` file in the root project, copy the value from `.env.example`, then edit those values which suitable for your local configuration
 - `make docker.up` (you can skip this step if you already have PostgreSQL on your localhost)
 - `make start` to run the application
+
+
+## Known Issues
+- Docker on workflows still doesn't work, got permission problem to use some actions from market place into my organization
+- Cloud Run deployment status = to-do
+
+## Additional Information
+- It took me a while to solve the problem with GitHub private repository access via SSH
+- It took me a couple of hours to set Subnet networking to allow the Cloud Run application to access the SQL server privately
+- I've initiated some terraform and linked the state file to the back end (storage), but haven't done any landing zone, or other provisioning by the way
