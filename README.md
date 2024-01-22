@@ -124,7 +124,7 @@ errors    | no      | any |  -    | Error extension |
 DVI-50003    | 503 | server unavailable      |
 
 ## BigQuery
-
+**_NOTE_**: This query doesn't work because some of columns have been used in group and aggregate expression on the same column
 ```query
 -- start from --
 DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1480 DAY);
