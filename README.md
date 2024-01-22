@@ -135,3 +135,73 @@ DVI-50003    | 503 | server unavailable      |
 - create `.env` file in the root project, copy the value from `.env.example`, then edit those values which suitable for your local configuration
 - `make docker.up` (you can skip this step if you already have PostgreSQL on your localhost)
 - `make start` to run the application
+
+
+## BigQuery
+
+**_NOTE_**: So far, this BigQuery still doesn't work, got some syntax errors because data was used in both group and aggregate
+```
+-- start from --
+DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1480 DAY);
+-- to --
+DECLARE end_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP();
+-- timeframe resolution (seconds) --
+DECLARE timeframe INT64 DEFAULT 900;
+-- threshold for detection --
+DECLARE deviation_threshold FLOAT64 DEFAULT 2.0;
+
+
+-- find stadard deviation in specific timeframe --
+-- start from --
+DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1480 DAY);
+-- to --
+DECLARE end_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP();
+-- timeframe resolution (seconds) --
+DECLARE timeframe INT64 DEFAULT 900;
+-- threshold for detection --
+DECLARE deviation_threshold FLOAT64 DEFAULT 2.0;
+WITH DeviceInteractionStats AS (
+  SELECT
+    device_id,
+    TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe)) AS interaction_time_series,
+    COUNT(*) AS interaction_count,
+    STDDEV_POP(COUNT(*)) OVER (PARTITION BY device_id, TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe))) AS base_stddev
+  FROM
+    `bigquery-public-data.ethereum_blockchain.blocks`
+  WHERE
+    `timestamp` BETWEEN start_at AND end_at
+  GROUP BY
+    device_id, interaction_time_series
+)
+
+SELECT
+  interaction_time_series,
+  device_id,
+  interaction_count,
+  base_stddev,
+  ABS(interaction_count - AVG(interaction_count) OVER (PARTITION BY device_id, interaction_time_series)) / base_stddev AS anomaly_score
+FROM (
+  SELECT
+    device_id,
+    interaction_time_series,
+    interaction_count,
+    base_stddev
+  FROM
+    DeviceInteractionStats
+)
+HAVING
+  anomaly_score > deviation_threshold
+ORDER BY
+  anomaly_score DESC;
+```
+
+## Known Issues
+### About Github Workflow
+- Github Workflows for deployment are still facing permission problems that do not allow to use of docker action from the marketplace
+- Cloud Run Deployment status = to-do
+
+
+## Additional Information
+- took my time for a while to solve GitHub private repository access via SSH in the CI workflows
+- took my time for a while to set up the private network to allow Cloud Run access to the private SQL server on GCP
+- I've set the Terraform to use the back-end state and write some instructions, but it hasn't been done yet
