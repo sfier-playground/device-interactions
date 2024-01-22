@@ -60,7 +60,6 @@ func (ts *TestSuite) TestSubmit() {
 			// Custom validation for the input data, for example, ensuring valid timestamps, location, etc.
 			assert.Equal(ts.T(), deviceSubmission.Timestamp, input.Timestamp)
 			assert.Equal(ts.T(), deviceSubmission.Location, input.Location)
-			// assert.Condition(ts.T(), func() bool {
 			for i := 0; i < len(input.Devices); i++ {
 				assert.Equal(ts.T(), deviceSubmission.Devices[i].DeviceID, input.Devices[i].DeviceID)
 				assert.Equal(ts.T(), deviceSubmission.Devices[i].Name, input.Devices[i].Name)
@@ -71,8 +70,6 @@ func (ts *TestSuite) TestSubmit() {
 					ts.Fail(fmt.Sprintf("Should be UUID format, but was %v", interactionID))
 				}
 			}
-			// 	return true
-			// })
 			return nil
 		}).Times(1)
 		err := ts.deviceSubmissionService.Submit(deviceSubmission)
