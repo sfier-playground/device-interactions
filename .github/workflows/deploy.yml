@@ -6,6 +6,6 @@ on:
 jobs:
   pipeline:
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
-    secrets:
-      GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}
- ## trigger pipline
+    with:
+      ref: ${{ github.sha }}
+    secrets: inherit
