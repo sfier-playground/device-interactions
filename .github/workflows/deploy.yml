@@ -6,7 +6,6 @@ on:
 jobs:
   pipeline:
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
-    environment: dev
     with:
       service-name: ${{vars.SERVICE_NAME}}
       ref: ${{ github.sha }}
