@@ -6,5 +6,6 @@ workflow_dispatch:
 jobs:
   pipeline:
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
-
+    with:
+      git-deploy-key: ${{ secrets.GIT_DEPLOY_KEY }}
  ## trigger pipline
