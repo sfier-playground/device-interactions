@@ -5,7 +5,6 @@ on:
   workflow_dispatch:
 jobs:
   pipeline:
-    environment: dev
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
     with:
       service-name: example
