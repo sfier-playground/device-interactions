@@ -6,4 +6,4 @@ jobs:
   pipeline:
     uses: sfier-playground/github-action-share-template/.github/workflows/go_workflow.yml@master
 
-## trigger pipline
+# trigger pipline
