@@ -124,53 +124,38 @@ errors    | no      | any |  -    | Error extension |
 DVI-50003    | 503 | server unavailable      |
 
 ## BigQuery
-**_NOTE_**: This query doesn't work because some of columns have been used in group and aggregate expression on the same column
 ```query
--- start from --
-DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1480 DAY);
--- to --
+DECLARE start_at TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1800 DAY);
 DECLARE end_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP();
--- timeframe resolution (seconds) --
-DECLARE timeframe INT64 DEFAULT 900;
--- threshold for detection --
-DECLARE deviation_threshold FLOAT64 DEFAULT 2.0;
 
 
-
--- find stadard deviation in specific timeframe --
-WITH DeviceInteractionStats AS (
+WITH stats AS (
   SELECT
-    miner,
-    TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe)) AS interaction_time_series,
+    device_id as device_id,
     COUNT(*) AS interaction_count,
-    STDDEV_POP(COUNT(*)) OVER (PARTITION BY miner, TIMESTAMP_SECONDS(UNIX_SECONDS(`timestamp`) - MOD(UNIX_SECONDS(`timestamp`), timeframe))) AS base_stddev
   FROM
-    `bigquery-public-data.ethereum_blockchain.blocks`
+    `target-table`
   WHERE
     `timestamp` BETWEEN start_at AND end_at
   GROUP BY
-    miner, interaction_time_series
+    device_id
+  ORDER BY device_id
+), deviateBar AS (
+   SELECT
+       avg(interaction_count) - stddev(interaction_count) AS lower_bound,
+       avg(interaction_count) + stddev(interaction_count) AS upper_bound
+   FROM
+       stats
 )
-
 SELECT
-  interaction_time_series,
-  miner,
-  interaction_count,
-  base_stddev,
-  ABS(interaction_count - AVG(interaction_count) OVER (PARTITION BY miner, interaction_time_series)) / base_stddev AS anomaly_score
-FROM (
-  SELECT
-    device_id,
-    interaction_time_series,
-    interaction_count,
-    base_stddev
-  FROM
-    DeviceInteractionStats
-)
-HAVING
-  anomaly_score > deviation_threshold
-ORDER BY
-  anomaly_score DESC;
+   device_id,
+   interaction_count,
+   lower_bound,
+   upper_bound,
+   interaction_count NOT BETWEEN lower_bound AND upper_bound AS is_anomaly
+FROM
+   stats,
+   deviateBar;
 ```
 
 ---
