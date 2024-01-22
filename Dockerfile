@@ -8,6 +8,7 @@ RUN apk update; \
     make
 RUN git config --global url."https://${PAT}:sifer169966@github.com/".insteadOf "https://github.com/"
 RUN go env -w GOPRIVATE=github.com/sifer169966
+RUN go env -w GOPROXY='direct'
 
 # Define current working directory
 WORKDIR /app
