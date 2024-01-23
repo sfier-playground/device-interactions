@@ -167,10 +167,14 @@ FROM
 - `make` command
 - `docker`
 - `go` version 1.21+
+- request to be a collaborator in my private repository(logger)
 
 ## Get started
 - create `.env` file in the root project, copy the value from `.env.example`, then edit those values which suitable for your local configuration
 - `make docker.up` (you can skip this step if you already have PostgreSQL on your localhost)
+- `go env -w GOPRIVATE=github.com/sifer169966`
+- `go env -w GOPROXY='direct'`
+- `go mod download`
 - `make start` to run the application
 
 

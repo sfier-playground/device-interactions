@@ -35,16 +35,13 @@ precommit.rehooks:
 GO := GO111MODULE=on go
 
 # Build GO application
-# -mod=vendor
-# tells the go command to use the vendor directory. In this mode,
-# the go command will not use the network or the module cache.
 # -v
-# print the names of packages as they are compiled.
+# print packages name.
 # -a
-# force rebuilding of packages that are already up-to-date.
+# force re-building of packages that are already up-to-date.
 # -o
 # -ldsflags
-# tells the version and go version.
+# update flag variable that link into the application.
 .PHONY: build
 build:
 	$(GO) build -ldflags '$(LDFLAGS)' -a -v -o $(GO_BINARY_NAME) main.go
