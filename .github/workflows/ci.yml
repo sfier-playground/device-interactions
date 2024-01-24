@@ -3,10 +3,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [develop, master]
-env:
-  LOCAL_REUSEABLE_WORKFLOW_REF: dev
 jobs:
   quality-verification:
     steps:
-      - uses: ./github/workflows/jobs/go_quality_verification.yml@$LOCAL_REUSEABLE_WORKFLOW_REF
+      - uses: ./github/workflows/jobs/go_quality_verification.yml@dev
         secrets: inherit
