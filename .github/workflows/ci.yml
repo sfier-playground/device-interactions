@@ -5,6 +5,5 @@ on:
     branches: [develop, master]
 jobs:
   quality-verification:
-    steps:
-      - uses: sfier-playground/github-action-share-template/.github/workflows/go_quality_verification.yml@dev
-        secrets: inherit
+    uses: sfier-playground/github-action-share-template/.github/workflows/go_quality_verification.yml@dev
+    secrets: inherit
