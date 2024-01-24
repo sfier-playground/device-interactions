@@ -6,5 +6,5 @@ on:
 jobs:
   quality-verification:
     steps:
-      - uses: sfier-playground/github-action-share-template/.github/go/go_quality_verification.yml@dev
+      - uses: sfier-playground/github-action-share-template/.github/workflows/go_quality_verification.yml@dev
         secrets: inherit
