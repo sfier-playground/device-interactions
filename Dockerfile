@@ -6,7 +6,7 @@ RUN apk update; \
     apk add --no-cache \
     git \
     make
-RUN git config --global url."https://${PAT}:sifer169966@github.com/".insteadOf "https://github.com/"
+RUN git config --global url."https://${PAT}@github.com/".insteadOf "https://github.com/"
 RUN go env -w GOPRIVATE=github.com/sifer169966
 RUN go env -w GOPROXY='direct'
 
