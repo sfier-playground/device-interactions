@@ -45,15 +45,23 @@ func ServeREST() error {
 		devicesV1.POST("", hdl.DeviceSubmission)
 	}
 	errCh := make(chan error, 1)
+	postgresConn, err := app.infra.postgres.DB()
+	if err != nil {
+		logger.Fatal("could not get posrgres connection", "error", err)
+	}
+	graceful := newGraceful(gracefulDependencies{
+		srv:      srv,
+		postgres: postgresConn,
+		errCh:    errCh,
+	})
 	go func() {
 		signal := <-c
 		logger.Info(fmt.Sprintf("got signal %v, start graceful shut down ...", signal))
 		// self protection
 		mdw.SetServerUnavailable()
-		graceful(srv, errCh)
+		graceful.start()
 	}()
-
-	err := srv.Start(":" + config.Get().App.HTTPPort)
+	err = srv.Start(":" + config.Get().App.HTTPPort)
 	if err != nil && err != http.ErrServerClosed {
 		logger.Error("unexpected rest-http server error", "error", err)
 		errCh <- err

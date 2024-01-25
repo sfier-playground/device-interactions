@@ -10,15 +10,21 @@ import (
 	"github.com/sifer169966/device-interactions/pkg/flags"
 	"github.com/sifer169966/device-interactions/pkg/validators"
 	"github.com/sifer169966/go-logger"
+	"gorm.io/gorm"
 )
 
 var app *application
 
 type application struct {
 	// svc stand for service
-	svc services
+	svc   services
+	infra infrastructures
 	// pkg stand for package
 	pkg packages
+}
+
+type infrastructures struct {
+	postgres *gorm.DB
 }
 
 type services struct {
@@ -63,6 +69,9 @@ func initApp() {
 	app = &application{
 		svc: services{
 			deviceSubmissionService: service.NewDeviceSubmission(deviceInteractionsRepo),
+		},
+		infra: infrastructures{
+			postgres: dbConn,
 		},
 		pkg: packages,
 	}
